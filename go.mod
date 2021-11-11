@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.9.1
 	github.com/Shopify/sarama v1.30.0
 	github.com/anthonynsimon/bild v0.13.0
+	github.com/desertbit/grumble v1.1.1 // indirect
 	github.com/fogleman/gg v1.3.0
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/go-vgo/robotgo v0.100.2
