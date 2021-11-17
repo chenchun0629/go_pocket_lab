@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"pocket_lab/ent/ent/admin"
 	"pocket_lab/ent/ent/car"
 	"pocket_lab/ent/ent/group"
@@ -16,18 +17,18 @@ import (
 )
 
 func main() {
-	client, err := ent.Open("mysql", "root:root@tcp(localhost:3306)/test?charset=utf8mb4&parseTime=true", ent.Debug())
+	client, err := ent.Open("mysql", "root:root@tcp(localhost:3306)/test?charset=utf8mb4&parseTime=true")
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
 	defer client.Close()
 	// Run the auto migration tool.
-	if err := client.Schema.Create(context.Background()); err != nil {
+	if err := client.Schema.WriteTo(context.Background(), os.Stdout); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	var c_err = Do3(context.Background(), client)
-	fmt.Println(c_err, "=============3")
+	//var c_err = Do3(context.Background(), client)
+	//fmt.Println(c_err, "=============3")
 
 }
 

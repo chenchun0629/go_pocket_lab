@@ -18,6 +18,9 @@ type Car func(*sql.Selector)
 // Cat is the predicate function for cat builders.
 type Cat func(*sql.Selector)
 
+// FieldTest is the predicate function for fieldtest builders.
+type FieldTest func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 

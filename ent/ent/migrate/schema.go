@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -82,6 +83,22 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// FieldTestsColumns holds the columns for the "field_tests" table.
+	FieldTestsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "date_d", Type: field.TypeTime},
+		{Name: "date", Type: field.TypeTime, SchemaType: map[string]string{"mysql": "date"}},
+		{Name: "title", Type: field.TypeString, Size: 64},
+		{Name: "j_f", Type: field.TypeJSON},
+		{Name: "j_s_f", Type: field.TypeJSON},
+		{Name: "app_id", Type: field.TypeString},
+	}
+	// FieldTestsTable holds the schema information for the "field_tests" table.
+	FieldTestsTable = &schema.Table{
+		Name:       "field_tests",
+		Columns:    FieldTestsColumns,
+		PrimaryKey: []*schema.Column{FieldTestsColumns[0]},
 	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
@@ -187,6 +204,7 @@ var (
 		BeesTable,
 		CarsTable,
 		CatsTable,
+		FieldTestsTable,
 		GroupsTable,
 		UsersTable,
 		AdminBeesTable,
@@ -199,6 +217,10 @@ func init() {
 	AdminsTable.ForeignKeys[0].RefTable = AdminsTable
 	CarsTable.ForeignKeys[0].RefTable = UsersTable
 	CatsTable.ForeignKeys[0].RefTable = AdminsTable
+	FieldTestsTable.Annotation = &entsql.Annotation{
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_unicode_ci",
+	}
 	AdminBeesTable.ForeignKeys[0].RefTable = AdminsTable
 	AdminBeesTable.ForeignKeys[1].RefTable = BeesTable
 	CatCbTable.ForeignKeys[0].RefTable = CatsTable

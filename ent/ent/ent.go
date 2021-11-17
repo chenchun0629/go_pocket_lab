@@ -9,6 +9,7 @@ import (
 	"pocket_lab/ent/ent/bee"
 	"pocket_lab/ent/ent/car"
 	"pocket_lab/ent/ent/cat"
+	"pocket_lab/ent/ent/fieldtest"
 	"pocket_lab/ent/ent/group"
 	"pocket_lab/ent/ent/user"
 
@@ -34,12 +35,13 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		admin.Table: admin.ValidColumn,
-		bee.Table:   bee.ValidColumn,
-		car.Table:   car.ValidColumn,
-		cat.Table:   cat.ValidColumn,
-		group.Table: group.ValidColumn,
-		user.Table:  user.ValidColumn,
+		admin.Table:     admin.ValidColumn,
+		bee.Table:       bee.ValidColumn,
+		car.Table:       car.ValidColumn,
+		cat.Table:       cat.ValidColumn,
+		fieldtest.Table: fieldtest.ValidColumn,
+		group.Table:     group.ValidColumn,
+		user.Table:      user.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

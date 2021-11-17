@@ -9,8 +9,10 @@ import (
 	"pocket_lab/ent/ent/bee"
 	"pocket_lab/ent/ent/car"
 	"pocket_lab/ent/ent/cat"
+	"pocket_lab/ent/ent/fieldtest"
 	"pocket_lab/ent/ent/group"
 	"pocket_lab/ent/ent/predicate"
+	"pocket_lab/ent/ent/schema"
 	"pocket_lab/ent/ent/user"
 	"sync"
 	"time"
@@ -27,12 +29,13 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAdmin = "Admin"
-	TypeBee   = "Bee"
-	TypeCar   = "Car"
-	TypeCat   = "Cat"
-	TypeGroup = "Group"
-	TypeUser  = "User"
+	TypeAdmin     = "Admin"
+	TypeBee       = "Bee"
+	TypeCar       = "Car"
+	TypeCat       = "Cat"
+	TypeFieldTest = "FieldTest"
+	TypeGroup     = "Group"
+	TypeUser      = "User"
 )
 
 // AdminMutation represents an operation that mutates the Admin nodes in the graph.
@@ -2216,6 +2219,568 @@ func (m *CatMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Cat edge %s", name)
+}
+
+// FieldTestMutation represents an operation that mutates the FieldTest nodes in the graph.
+type FieldTestMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	date_d        *time.Time
+	date          *time.Time
+	title         *string
+	j_f           *[]string
+	j_s_f         **schema.FTConfig
+	app_id        *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*FieldTest, error)
+	predicates    []predicate.FieldTest
+}
+
+var _ ent.Mutation = (*FieldTestMutation)(nil)
+
+// fieldtestOption allows management of the mutation configuration using functional options.
+type fieldtestOption func(*FieldTestMutation)
+
+// newFieldTestMutation creates new mutation for the FieldTest entity.
+func newFieldTestMutation(c config, op Op, opts ...fieldtestOption) *FieldTestMutation {
+	m := &FieldTestMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFieldTest,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFieldTestID sets the ID field of the mutation.
+func withFieldTestID(id int) fieldtestOption {
+	return func(m *FieldTestMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FieldTest
+		)
+		m.oldValue = func(ctx context.Context) (*FieldTest, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FieldTest.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFieldTest sets the old FieldTest of the mutation.
+func withFieldTest(node *FieldTest) fieldtestOption {
+	return func(m *FieldTestMutation) {
+		m.oldValue = func(context.Context) (*FieldTest, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FieldTestMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FieldTestMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FieldTestMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetDateD sets the "date_d" field.
+func (m *FieldTestMutation) SetDateD(t time.Time) {
+	m.date_d = &t
+}
+
+// DateD returns the value of the "date_d" field in the mutation.
+func (m *FieldTestMutation) DateD() (r time.Time, exists bool) {
+	v := m.date_d
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDateD returns the old "date_d" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldDateD(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDateD is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDateD requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDateD: %w", err)
+	}
+	return oldValue.DateD, nil
+}
+
+// ResetDateD resets all changes to the "date_d" field.
+func (m *FieldTestMutation) ResetDateD() {
+	m.date_d = nil
+}
+
+// SetDate sets the "date" field.
+func (m *FieldTestMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *FieldTestMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *FieldTestMutation) ResetDate() {
+	m.date = nil
+}
+
+// SetTitle sets the "title" field.
+func (m *FieldTestMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *FieldTestMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *FieldTestMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetJF sets the "j_f" field.
+func (m *FieldTestMutation) SetJF(s []string) {
+	m.j_f = &s
+}
+
+// JF returns the value of the "j_f" field in the mutation.
+func (m *FieldTestMutation) JF() (r []string, exists bool) {
+	v := m.j_f
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldJF returns the old "j_f" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldJF(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldJF is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldJF requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldJF: %w", err)
+	}
+	return oldValue.JF, nil
+}
+
+// ResetJF resets all changes to the "j_f" field.
+func (m *FieldTestMutation) ResetJF() {
+	m.j_f = nil
+}
+
+// SetJSF sets the "j_s_f" field.
+func (m *FieldTestMutation) SetJSF(sc *schema.FTConfig) {
+	m.j_s_f = &sc
+}
+
+// JSF returns the value of the "j_s_f" field in the mutation.
+func (m *FieldTestMutation) JSF() (r *schema.FTConfig, exists bool) {
+	v := m.j_s_f
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldJSF returns the old "j_s_f" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldJSF(ctx context.Context) (v *schema.FTConfig, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldJSF is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldJSF requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldJSF: %w", err)
+	}
+	return oldValue.JSF, nil
+}
+
+// ResetJSF resets all changes to the "j_s_f" field.
+func (m *FieldTestMutation) ResetJSF() {
+	m.j_s_f = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *FieldTestMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *FieldTestMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the FieldTest entity.
+// If the FieldTest object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldTestMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *FieldTestMutation) ResetAppID() {
+	m.app_id = nil
+}
+
+// Where appends a list predicates to the FieldTestMutation builder.
+func (m *FieldTestMutation) Where(ps ...predicate.FieldTest) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *FieldTestMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (FieldTest).
+func (m *FieldTestMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FieldTestMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.date_d != nil {
+		fields = append(fields, fieldtest.FieldDateD)
+	}
+	if m.date != nil {
+		fields = append(fields, fieldtest.FieldDate)
+	}
+	if m.title != nil {
+		fields = append(fields, fieldtest.FieldTitle)
+	}
+	if m.j_f != nil {
+		fields = append(fields, fieldtest.FieldJF)
+	}
+	if m.j_s_f != nil {
+		fields = append(fields, fieldtest.FieldJSF)
+	}
+	if m.app_id != nil {
+		fields = append(fields, fieldtest.FieldAppID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FieldTestMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case fieldtest.FieldDateD:
+		return m.DateD()
+	case fieldtest.FieldDate:
+		return m.Date()
+	case fieldtest.FieldTitle:
+		return m.Title()
+	case fieldtest.FieldJF:
+		return m.JF()
+	case fieldtest.FieldJSF:
+		return m.JSF()
+	case fieldtest.FieldAppID:
+		return m.AppID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FieldTestMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case fieldtest.FieldDateD:
+		return m.OldDateD(ctx)
+	case fieldtest.FieldDate:
+		return m.OldDate(ctx)
+	case fieldtest.FieldTitle:
+		return m.OldTitle(ctx)
+	case fieldtest.FieldJF:
+		return m.OldJF(ctx)
+	case fieldtest.FieldJSF:
+		return m.OldJSF(ctx)
+	case fieldtest.FieldAppID:
+		return m.OldAppID(ctx)
+	}
+	return nil, fmt.Errorf("unknown FieldTest field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FieldTestMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case fieldtest.FieldDateD:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDateD(v)
+		return nil
+	case fieldtest.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
+		return nil
+	case fieldtest.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case fieldtest.FieldJF:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJF(v)
+		return nil
+	case fieldtest.FieldJSF:
+		v, ok := value.(*schema.FTConfig)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJSF(v)
+		return nil
+	case fieldtest.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FieldTest field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FieldTestMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FieldTestMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FieldTestMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FieldTest numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FieldTestMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FieldTestMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FieldTestMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown FieldTest nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FieldTestMutation) ResetField(name string) error {
+	switch name {
+	case fieldtest.FieldDateD:
+		m.ResetDateD()
+		return nil
+	case fieldtest.FieldDate:
+		m.ResetDate()
+		return nil
+	case fieldtest.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case fieldtest.FieldJF:
+		m.ResetJF()
+		return nil
+	case fieldtest.FieldJSF:
+		m.ResetJSF()
+		return nil
+	case fieldtest.FieldAppID:
+		m.ResetAppID()
+		return nil
+	}
+	return fmt.Errorf("unknown FieldTest field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FieldTestMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FieldTestMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FieldTestMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FieldTestMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FieldTestMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FieldTestMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FieldTestMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown FieldTest unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FieldTestMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown FieldTest edge %s", name)
 }
 
 // GroupMutation represents an operation that mutates the Group nodes in the graph.

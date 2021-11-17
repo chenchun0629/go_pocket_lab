@@ -13,6 +13,7 @@ import (
 	"pocket_lab/ent/ent/bee"
 	"pocket_lab/ent/ent/car"
 	"pocket_lab/ent/ent/cat"
+	"pocket_lab/ent/ent/fieldtest"
 	"pocket_lab/ent/ent/group"
 	"pocket_lab/ent/ent/user"
 
@@ -34,6 +35,8 @@ type Client struct {
 	Car *CarClient
 	// Cat is the client for interacting with the Cat builders.
 	Cat *CatClient
+	// FieldTest is the client for interacting with the FieldTest builders.
+	FieldTest *FieldTestClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// User is the client for interacting with the User builders.
@@ -55,6 +58,7 @@ func (c *Client) init() {
 	c.Bee = NewBeeClient(c.config)
 	c.Car = NewCarClient(c.config)
 	c.Cat = NewCatClient(c.config)
+	c.FieldTest = NewFieldTestClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -88,14 +92,15 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Admin:  NewAdminClient(cfg),
-		Bee:    NewBeeClient(cfg),
-		Car:    NewCarClient(cfg),
-		Cat:    NewCatClient(cfg),
-		Group:  NewGroupClient(cfg),
-		User:   NewUserClient(cfg),
+		ctx:       ctx,
+		config:    cfg,
+		Admin:     NewAdminClient(cfg),
+		Bee:       NewBeeClient(cfg),
+		Car:       NewCarClient(cfg),
+		Cat:       NewCatClient(cfg),
+		FieldTest: NewFieldTestClient(cfg),
+		Group:     NewGroupClient(cfg),
+		User:      NewUserClient(cfg),
 	}, nil
 }
 
@@ -113,13 +118,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		config: cfg,
-		Admin:  NewAdminClient(cfg),
-		Bee:    NewBeeClient(cfg),
-		Car:    NewCarClient(cfg),
-		Cat:    NewCatClient(cfg),
-		Group:  NewGroupClient(cfg),
-		User:   NewUserClient(cfg),
+		config:    cfg,
+		Admin:     NewAdminClient(cfg),
+		Bee:       NewBeeClient(cfg),
+		Car:       NewCarClient(cfg),
+		Cat:       NewCatClient(cfg),
+		FieldTest: NewFieldTestClient(cfg),
+		Group:     NewGroupClient(cfg),
+		User:      NewUserClient(cfg),
 	}, nil
 }
 
@@ -153,6 +159,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Bee.Use(hooks...)
 	c.Car.Use(hooks...)
 	c.Cat.Use(hooks...)
+	c.FieldTest.Use(hooks...)
 	c.Group.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -659,6 +666,96 @@ func (c *CatClient) QueryCb(ca *Cat) *BeeQuery {
 // Hooks returns the client hooks.
 func (c *CatClient) Hooks() []Hook {
 	return c.hooks.Cat
+}
+
+// FieldTestClient is a client for the FieldTest schema.
+type FieldTestClient struct {
+	config
+}
+
+// NewFieldTestClient returns a client for the FieldTest from the given config.
+func NewFieldTestClient(c config) *FieldTestClient {
+	return &FieldTestClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `fieldtest.Hooks(f(g(h())))`.
+func (c *FieldTestClient) Use(hooks ...Hook) {
+	c.hooks.FieldTest = append(c.hooks.FieldTest, hooks...)
+}
+
+// Create returns a create builder for FieldTest.
+func (c *FieldTestClient) Create() *FieldTestCreate {
+	mutation := newFieldTestMutation(c.config, OpCreate)
+	return &FieldTestCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FieldTest entities.
+func (c *FieldTestClient) CreateBulk(builders ...*FieldTestCreate) *FieldTestCreateBulk {
+	return &FieldTestCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FieldTest.
+func (c *FieldTestClient) Update() *FieldTestUpdate {
+	mutation := newFieldTestMutation(c.config, OpUpdate)
+	return &FieldTestUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FieldTestClient) UpdateOne(ft *FieldTest) *FieldTestUpdateOne {
+	mutation := newFieldTestMutation(c.config, OpUpdateOne, withFieldTest(ft))
+	return &FieldTestUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FieldTestClient) UpdateOneID(id int) *FieldTestUpdateOne {
+	mutation := newFieldTestMutation(c.config, OpUpdateOne, withFieldTestID(id))
+	return &FieldTestUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FieldTest.
+func (c *FieldTestClient) Delete() *FieldTestDelete {
+	mutation := newFieldTestMutation(c.config, OpDelete)
+	return &FieldTestDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FieldTestClient) DeleteOne(ft *FieldTest) *FieldTestDeleteOne {
+	return c.DeleteOneID(ft.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FieldTestClient) DeleteOneID(id int) *FieldTestDeleteOne {
+	builder := c.Delete().Where(fieldtest.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FieldTestDeleteOne{builder}
+}
+
+// Query returns a query builder for FieldTest.
+func (c *FieldTestClient) Query() *FieldTestQuery {
+	return &FieldTestQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a FieldTest entity by its id.
+func (c *FieldTestClient) Get(ctx context.Context, id int) (*FieldTest, error) {
+	return c.Query().Where(fieldtest.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FieldTestClient) GetX(ctx context.Context, id int) *FieldTest {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FieldTestClient) Hooks() []Hook {
+	return c.hooks.FieldTest
 }
 
 // GroupClient is a client for the Group schema.

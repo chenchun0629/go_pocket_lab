@@ -20,6 +20,8 @@ type Tx struct {
 	Car *CarClient
 	// Cat is the client for interacting with the Cat builders.
 	Cat *CatClient
+	// FieldTest is the client for interacting with the FieldTest builders.
+	FieldTest *FieldTestClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// User is the client for interacting with the User builders.
@@ -163,6 +165,7 @@ func (tx *Tx) init() {
 	tx.Bee = NewBeeClient(tx.config)
 	tx.Car = NewCarClient(tx.config)
 	tx.Cat = NewCatClient(tx.config)
+	tx.FieldTest = NewFieldTestClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
