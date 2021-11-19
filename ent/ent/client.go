@@ -169,7 +169,7 @@ type AdminClient struct {
 	config
 }
 
-// NewAdminClient returns a client for the Admin from the given config.
+// NewAdminClient returns a client for the Admin from the given configs.
 func NewAdminClient(c config) *AdminClient {
 	return &AdminClient{config: c}
 }
@@ -323,7 +323,7 @@ type BeeClient struct {
 	config
 }
 
-// NewBeeClient returns a client for the Bee from the given config.
+// NewBeeClient returns a client for the Bee from the given configs.
 func NewBeeClient(c config) *BeeClient {
 	return &BeeClient{config: c}
 }
@@ -445,7 +445,7 @@ type CarClient struct {
 	config
 }
 
-// NewCarClient returns a client for the Car from the given config.
+// NewCarClient returns a client for the Car from the given configs.
 func NewCarClient(c config) *CarClient {
 	return &CarClient{config: c}
 }
@@ -551,7 +551,7 @@ type CatClient struct {
 	config
 }
 
-// NewCatClient returns a client for the Cat from the given config.
+// NewCatClient returns a client for the Cat from the given configs.
 func NewCatClient(c config) *CatClient {
 	return &CatClient{config: c}
 }
@@ -673,7 +673,7 @@ type FieldTestClient struct {
 	config
 }
 
-// NewFieldTestClient returns a client for the FieldTest from the given config.
+// NewFieldTestClient returns a client for the FieldTest from the given configs.
 func NewFieldTestClient(c config) *FieldTestClient {
 	return &FieldTestClient{config: c}
 }
@@ -763,7 +763,7 @@ type GroupClient struct {
 	config
 }
 
-// NewGroupClient returns a client for the Group from the given config.
+// NewGroupClient returns a client for the Group from the given configs.
 func NewGroupClient(c config) *GroupClient {
 	return &GroupClient{config: c}
 }
@@ -869,7 +869,7 @@ type UserClient struct {
 	config
 }
 
-// NewUserClient returns a client for the User from the given config.
+// NewUserClient returns a client for the User from the given configs.
 func NewUserClient(c config) *UserClient {
 	return &UserClient{config: c}
 }

@@ -19,6 +19,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.23
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3
+	github.com/spf13/viper v1.9.0 // indirect
 	github.com/vcaesar/gcv v0.31.1
 	github.com/withlin/canal-go v1.1.1
 	google.golang.org/protobuf v1.27.1 // indirect

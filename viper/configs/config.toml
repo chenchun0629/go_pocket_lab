@@ -1,0 +1,4 @@
+[server]
+protocols = ["http", "https", "port"]
+ports = [10000, 10001, 10002]
+timeout = "5s"
