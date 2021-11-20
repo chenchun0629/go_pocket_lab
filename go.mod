@@ -5,6 +5,7 @@ go 1.16
 require (
 	entgo.io/ent v0.9.1
 	github.com/Jeffail/tunny v0.1.4 // indirect
+	github.com/Ksloveyuan/channelx v0.3.1 // indirect
 	github.com/Shopify/sarama v1.30.0
 	github.com/anthonynsimon/bild v0.13.0
 	github.com/desertbit/grumble v1.1.1
@@ -17,6 +18,8 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/panjf2000/ants/v2 v2.4.6 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/segmentio/kafka-go v0.4.23
 	github.com/sirupsen/logrus v1.8.1
