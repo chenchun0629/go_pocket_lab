@@ -17,8 +17,17 @@ func main() {
 	go func() {
 		for s := range c {
 			switch s {
-			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
-				fmt.Println("Program Exit...", s)
+			case syscall.SIGHUP:
+				fmt.Println("SIGHUP Program Exit...", s)
+				GracefullExit()
+			case syscall.SIGINT:
+				fmt.Println("SIGINT Program Exit...", s)
+				GracefullExit()
+			case syscall.SIGTERM:
+				fmt.Println("SIGTERM Program Exit...", s)
+				GracefullExit()
+			case syscall.SIGQUIT:
+				fmt.Println("SIGQUIT Program Exit...", s)
 				GracefullExit()
 			//case syscall.SIGUSR1:
 			//	fmt.Println("usr1 signal", s)
