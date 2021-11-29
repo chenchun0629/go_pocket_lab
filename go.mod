@@ -10,6 +10,7 @@ require (
 	github.com/anthonynsimon/bild v0.13.0
 	github.com/desertbit/grumble v1.1.1
 	github.com/fogleman/gg v1.3.0
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/go-vgo/robotgo v0.100.2
 	github.com/gocolly/colly/v2 v2.1.0

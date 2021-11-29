@@ -19,7 +19,7 @@ type ServeConfig struct {
 }
 
 func (c *ServeConfig) Load() {
-	err := viper.Sub("server").Unmarshal(c)
+	err := viper.Sub("data.server").Unmarshal(c)
 	fmt.Printf("%#v, %#v", c, err)
 }
 
@@ -27,7 +27,7 @@ func main() {
 
 	var sc = new(ServeConfig)
 	//viper.SetConfigName("config")
-	viper.SetConfigType("toml")
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./configs")
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
@@ -40,7 +40,7 @@ func main() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("read configs failed: %v", err)
+		log.Fatalf("read configs failed: %v", err)
 	}
 
 	fmt.Println("protocols: ", viper.GetStringSlice("server.protocols"))

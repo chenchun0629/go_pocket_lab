@@ -1,4 +1,4 @@
-package main
+package mcain
 
 import (
 	"fmt"
@@ -22,12 +22,19 @@ func String(s string) int {
 	return 0
 }
 
-func main() {
-	str := "1"
-
-	for i := 0; i < 3; i++ {
-		hc := String(str)
-		fmt.Println("hashcode:", hc)
-
+func String2(s string) int {
+	var (
+		//l = len(s)
+		r = 0
+	)
+	for _, v := range s {
+		r += 31*r + int(v)
 	}
+
+	return r
+}
+
+func main() {
+	var s = "ccc"
+	fmt.Println(String2(s), String(s))
 }

@@ -1,0 +1,10 @@
+data:
+  server:
+    protocols:
+      - http
+      - https
+      - port
+    ports:
+      - 10000
+      - 10001
+    timeout: 5s
