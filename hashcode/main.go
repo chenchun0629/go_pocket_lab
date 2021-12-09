@@ -1,8 +1,9 @@
-package mcain
+package main
 
 import (
 	"fmt"
 	"hash/crc32"
+	"stathat.com/c/consistent"
 )
 
 // String hashes a string to a unique hashcode.
@@ -35,6 +36,15 @@ func String2(s string) int {
 }
 
 func main() {
-	var s = "ccc"
-	fmt.Println(String2(s), String(s))
+
+	var c = consistent.New()
+	c.Add("haha")
+	c.Add("hehe")
+	c.Add("xixi")
+	fmt.Println(c.Get("hoho"))
+	//var s = "ccc"
+	//var m = murmur3.New128()
+	//_, _ = m.Write([]byte(s))
+	//fmt.Println(string(m.Sum([]byte("aaa"))))
+	//fmt.Println(String2(s), String(s), string(murmur3.New128().Sum([]byte(s))))
 }
