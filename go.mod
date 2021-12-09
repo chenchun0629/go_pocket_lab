@@ -18,6 +18,7 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/google/wire v0.5.0
+	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/lafikl/consistent v0.0.0-20210222184039-5e8acd7e59f2 // indirect
 	github.com/panjf2000/ants/v2 v2.4.6
 	github.com/pkg/errors v0.9.1
