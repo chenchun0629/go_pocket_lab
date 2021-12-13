@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -26,6 +27,9 @@ func main() {
 			v.Store(cfg)
 		}
 	}()
+
+	var ctx = context.TODO()
+	ctx = context.WithValue(ctx, "key", "value")
 
 	// 启动多个reader goroutine，不断获取数据
 	var wg sync.WaitGroup

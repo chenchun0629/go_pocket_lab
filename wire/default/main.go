@@ -16,8 +16,8 @@ type Player struct {
 	Name string
 }
 
-func NewPlayer(name string) Player {
-	return Player{Name: name}
+func NewPlayer(name string) (Player, error) {
+	return Player{Name: name}, nil
 }
 
 type Mission struct {
@@ -34,6 +34,6 @@ func (m Mission) Start() {
 }
 
 func main() {
-	mission := InitMission("dj")
+	mission, _ := InitMission("dj")
 	mission.Start()
 }

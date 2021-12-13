@@ -11,20 +11,60 @@ import (
 
 // Injectors from wire.go:
 
-func InitEndingA(name string) EndingA {
+// 清理函数
+func InitMission(name string) (Mission, func(), error) {
 	player := NewPlayer(name)
 	monster := NewMonster()
+	mission := NewMission(player, monster)
+	return mission, func() {
+	}, nil
+}
+
+// 结构字段作为构造器
+func InitPlayer() Player {
+	mission := NewMission_A()
+	player := mission.Player
+	return player
+}
+
+func InitMonster() Monster {
+	mission := NewMission_A()
+	monster := mission.Monster
+	return monster
+}
+
+// 绑定值
+func InitEndingA(name string) EndingA {
+	player := NewPlayer(name)
+	monster := _wireMonsterValue
 	endingA := NewEndingA(player, monster)
 	return endingA
 }
 
+var (
+	_wireMonsterValue = kitty
+)
+
 func InitEndingB(name string) EndingB {
 	player := NewPlayer(name)
-	monster := NewMonster()
+	monster := _wireMainMonsterValue
 	endingB := NewEndingB(player, monster)
 	return endingB
 }
 
+var (
+	_wireMainMonsterValue = kitty
+)
+
 // wire.go:
 
+// ProviderSet
 var monsterPlayerSet = wire.NewSet(NewMonster, NewPlayer)
+
+// 结构构造器
+var endingASet = wire.NewSet(monsterPlayerSet, wire.Struct(new(EndingA), "Player", "Monster"))
+
+var endingBSet = wire.NewSet(monsterPlayerSet, wire.Struct(new(EndingB), "Player", "Monster"))
+
+// 绑定值
+var kitty = Monster{Name: "kitty"}
