@@ -28,6 +28,6 @@ func main() {
 	for i := 0; i < 3; i++ {
 		hc := String(str)
 		fmt.Println("hashcode:", hc)
-
 	}
+
 }
