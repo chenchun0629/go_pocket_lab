@@ -14,7 +14,7 @@ func main() {
 
 func ExampleClient() {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:29000",
+		Addr:     "localhost:63801",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
