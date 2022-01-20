@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/coreos/etcd/clientv3"
-	"go.etcd.io/etcd/clientv3/concurrency"
+	"go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/concurrency"
 	"log"
 	"os"
 	"os/signal"
@@ -33,7 +33,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		m := concurrency.NewMutex(session, lockKey)
 
 		if err := m.Lock(context.TODO()); err != nil {

@@ -6,11 +6,9 @@ replace (
 	github.com/coreos/bbolt => go.etcd.io/bbolt v1.3.6
 	github.com/coreos/go-systemd => github.com/coreos/go-systemd/v22 v22.0.0
 	google.golang.org/grpc => google.golang.org/grpc v1.26.0
-
 )
 
 require (
-	github.com/Scalingo/go-etcd-lock/v5 v5.0.5
 	github.com/coreos/bbolt v0.0.0-00010101000000-000000000000 // indirect
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/coreos/go-systemd v0.0.0-00010101000000-000000000000 // indirect

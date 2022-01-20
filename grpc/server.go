@@ -2,79 +2,118 @@ package main
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"google.golang.org/grpc"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"pocket_lab/grpc/etcd"
+	"pocket_lab/grpc/message"
+	"strings"
 )
 
-const (
-	port = ":50051"
-)
-
-type UserService struct {
-	// 实现 User 服务的业务对象
+type MessageSender struct {
+	message.UnsafeMessageSenderServer
 }
 
-// UserService 实现了 User 服务接口中声明的所有方法
-func (userService *UserService) UserIndex(ctx context.Context, in *user.UserIndexRequest) (*user.UserIndexResponse, error) {
-	log.Printf("receive user index request: page %d page_size %d", in.Page, in.PageSize)
-
-	return &user.UserIndexResponse{
-		Err: 0,
-		Msg: "success",
-		Data: []*user.UserEntity{
-			{Name: "big_cat", Age: 28},
-			{Name: "sqrt_cat", Age: 29},
-		},
-	}, nil
+func (m *MessageSender) Send(ctx context.Context, request *message.MessageRequest) (*message.MessageResponse, error) {
+	log.Println("receive message:", request.GetSaySomething())
+	resp := &message.MessageResponse{}
+	resp.ResponseSomething = "roger that!"
+	return resp, nil
 }
 
-func (userService *UserService) UserView(ctx context.Context, in *user.UserViewRequest) (*user.UserViewResponse, error) {
-	log.Printf("receive user view request: uid %d", in.Uid)
+func Register(ctx context.Context, client *clientv3.Client, service, self string) error {
+	resp, err := client.Grant(ctx, 2)
+	if err != nil {
+		return errors.Wrap(err, "etcd grant")
+	}
+	_, err = client.Put(ctx, strings.Join([]string{service, self}, "/"), self, clientv3.WithLease(resp.ID))
+	if err != nil {
+		return errors.Wrap(err, "etcd put")
+	}
+	// respCh 需要消耗, 不然会有 warning
+	respCh, err := client.KeepAlive(ctx, resp.ID)
+	if err != nil {
+		return errors.Wrap(err, "etcd keep alive")
+	}
 
-	return &user.UserViewResponse{
-		Err:  0,
-		Msg:  "success",
-		Data: &user.UserEntity{Name: "james", Age: 28},
-	}, nil
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-respCh:
+
+		}
+	}
 }
 
-func (userService *UserService) UserPost(ctx context.Context, in *user.UserPostRequest) (*user.UserPostResponse, error) {
-	log.Printf("receive user post request: name %s password %s age %d", in.Name, in.Password, in.Age)
-
-	return &user.UserPostResponse{
-		Err: 0,
-		Msg: "success",
-	}, nil
-}
-
-func (userService *UserService) UserDelete(ctx context.Context, in *user.UserDeleteRequest) (*user.UserDeleteResponse, error) {
-	log.Printf("receive user delete request: uid %d", in.Uid)
-
-	return &user.UserDeleteResponse{
-		Err: 0,
-		Msg: "success",
-	}, nil
-}
+//func etcdRegister(listener net.Listener) {
+//
+//
+//	em, err := endpoints.NewManager(client, "test/grpc/message")
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	grant, err := client.Grant(context.TODO(), 2)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	go func() {
+//		respCh, err := client.KeepAlive(context.TODO(), grant.ID)
+//		if err != nil {
+//			panic(err)
+//		}
+//
+//		for {
+//			select {
+//			case <-respCh:
+//			}
+//		}
+//	}()
+//
+//	var ip, _ = etcd.Extract(listener.Addr().String(), listener)
+//
+//	err = em.AddEndpoint(
+//		context.TODO(),
+//		"test/grpc/message/e1",
+//		//endpoints.Endpoint{Addr: "127.0.0.1:12345"},
+//		endpoints.Endpoint{Addr: ip},
+//		clientv3.WithLease(grant.ID),
+//	)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	//go func() {
+//	//	_ = Register(context.TODO(), client, "", "")
+//	//}()
+//}
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	srv := grpc.NewServer()
+	message.RegisterMessageSenderServer(srv, &MessageSender{})
+	listener, err := net.Listen("tcp", ":12345")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// 创建 RPC 服务容器
-	grpcServer := grpc.NewServer()
+	err = etcd.Register(context.TODO(), etcd.NewClient(), "test/grpc/message", listener)
+	if err != nil {
+		log.Fatalf("failed to register serve: %v", err)
+	}
 
-	// 为 User 服务注册业务实现 将 User 服务绑定到 RPC 服务容器上
-	user.RegisterUserServer(grpcServer, &UserService{})
-	// 注册反射服务 这个服务是CLI使用的 跟服务本身没有关系
-
-	reflection.Register(grpcServer)
-
-	if err := grpcServer.Serve(lis); err != nil {
+	err = srv.Serve(listener)
+	if err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func handleSendMessage(ctx context.Context, req *message.MessageRequest) (*message.MessageResponse, error) {
+	log.Println("receive message:", req.GetSaySomething())
+	resp := &message.MessageResponse{}
+	resp.ResponseSomething = "roger that!"
+	return resp, nil
 }
